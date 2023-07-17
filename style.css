@@ -3,7 +3,7 @@ body {
 	padding: 0;
 	font-family: Arial, sans-serif;
 	overflow: auto;
-	background-color: #5a81cf;
+	background-color: #148e1e;
 	background-size: 400% 400%;
 	background-attachment: fixed;
   }  
@@ -14,7 +14,7 @@ body {
   }
   
   #header {
-	background-color: #3366cc;
+	background-color: #0b461b;
 	color: #ffffff;
 	text-align: center;
 	padding: 20px;
@@ -26,7 +26,7 @@ body {
   }
   
   #search-button {
-	background-color: #3366cc;
+	background-color: #063b05;
 	border: none;
 	color: white;
 	padding: 15px 32px;

@@ -1,22 +1,17 @@
-const button = document.querySelector('#button');
+const searchButton = document.querySelector('.searchbutton');
+const searchInput = document.querySelector('.search-bar');
 
-async function getGeoData() {
-  const GeolocationCoordinates = "http://api.openweathermap.org/geo/1.0/direct?q=London&limit=1&units=standard&appid=5c24ae42624e82bc2dd372d2ce2a5afc";
-  const request = await fetch(GeolocationCoordinates);
-  const data = await request.json();
-  console.log(data);
+searchButton.addEventListener('click', async function () {
+  const response = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${searchInput.value}&limit=1&appid=5c24ae42624e82bc2dd372d2ce2a5afc`);
+  const data = await response.json();
   getWeather(data[0].lat, data[0].lon);
-}
-
-getGeoData();
+});
 
 function getWeather(latitude, longitude) {
-  var weatherApi = "http://api.openweathermap.org/data/2.5/forecast?&units=imperial&lat=" + latitude + "&lon=" + longitude + "&appid=5c24ae42624e82bc2dd372d2ce2a5afc";
+  const weatherApi = `http://api.openweathermap.org/data/2.5/forecast?&units=imperial&lat=${latitude}&lon=${longitude}&appid=5c24ae42624e82bc2dd372d2ce2a5afc`;
   fetch(weatherApi)
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (data) {
+    .then(response => response.json())
+    .then(data => {
       console.log(data);
       console.dir(data.list);
       console.log(data.list[0]);
@@ -38,30 +33,28 @@ function getWeather(latitude, longitude) {
         const dayWind = document.querySelector(`#${days[i]}Wind`);
         dayWind.textContent = data.list[i * 8].wind.speed;
       }
+    })
+    .catch(error => {
+      console.error(error);
+      alert("Weather data not found.");
     });
 }
-
-const searchButton = document.querySelector('.searchbutton');
-
-button.addEventListener('click', async function () {
-  const searchBar = document.querySelector('.search-bar');
-  const request = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${searchBar.value}&limit=1&appid=5c24ae42624e82bc2dd372d2ce2a5afc`);
-  const data = await request.json();
-  getWeather(data[0].lat, data[0].lon);
-});
 
 const weather = {
   appKey: "5c24ae42624e82bc2dd372d2ce2a5afc",
   fetchWeather: function (city) {
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${this.appKey}`)
-      .then((response) => {
+      .then(response => {
         if (!response.ok) {
-          alert("No weather found.");
           throw new Error("No weather found.");
         }
         return response.json();
       })
-      .then((data) => this.displayWeather(data));
+      .then(data => this.displayWeather(data))
+      .catch(error => {
+        console.error(error);
+        alert("Weather data not found.");
+      });
   },
   displayWeather: function (data) {
     const { name } = data;
@@ -78,7 +71,7 @@ const weather = {
     document.querySelector(".weather").classList.remove("loading");
   },
   search: function () {
-    this.fetchWeather(document.querySelector(".search-bar").value);
+    this.fetchWeather(searchInput.value);
   },
 };
 
@@ -87,9 +80,10 @@ document.querySelector(".search button").addEventListener("click", function () {
 });
 
 document.querySelector(".search-bar").addEventListener("keyup", function (event) {
-  if (event.key == "Enter") {
+  if (event.key === "Enter") {
     weather.search();
   }
 });
 
 weather.fetchWeather("");
+
